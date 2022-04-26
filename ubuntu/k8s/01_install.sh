@@ -1,6 +1,9 @@
 #!/bin/bash
 
-KUBE_VERSION=1.23.1-00
+KUBE_VERSION=$1
+#KUBE_VERSION=1.23.1-00
+
+echo "Installing k8s, ver: ${KUBE_VERSION}"
 
 . /vagrant/ubuntu/k8s/config
 

@@ -20,6 +20,12 @@ PUBLIC_MASTER_IP_START = 210
 PUBLIC_WORKER_IP_START = 220
 
 
+DNS="8.8.8.8"    # preferred DNS
+VBOX="6.1.34"    # VirtualBox version
+DOCKER="20.10"   # Docker version filter for Ubuntu
+K8S="1.23"       # k8s version to install 
+
+
 # -----------
 
 PRIVATE_IP_NW = "192.168.57."
@@ -58,14 +64,20 @@ Vagrant.configure("2") do |config|
         end
       end
 
-      node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/setup/01_setup-hosts.sh" do |s|
+      node.vm.provision "setup-hosts",   :type => "shell", :path => "ubuntu/setup/01_setup-hosts.sh" do |s|
         s.args = ["enp0s8"]
       end
-      node.vm.provision "setup-dns",     type: "shell", :path => "ubuntu/setup/02_update-dns.sh"
-      node.vm.provision "setup-upgrade", type: "shell", :path => "ubuntu/setup/03_upgrade.sh"
-      node.vm.provision "setup-vagrant", type: "shell", :path => "ubuntu/setup/04_install-guest-additions.sh"
-      node.vm.provision "setup-docker",  type: "shell", :path => "ubuntu/setup/05_install-docker.sh"
-      node.vm.provision "setup-sshkey",  type: "shell", :path => "ubuntu/setup/06_add-ssh-key.sh"
+      node.vm.provision "setup-dns",     :type => "shell", :path => "ubuntu/setup/02_update-dns.sh"  do |s|
+        s.args = [DNS]
+      end
+      node.vm.provision "setup-upgrade", :type => "shell", :path => "ubuntu/setup/03_upgrade.sh"
+      node.vm.provision "setup-vboxadd", :type => "shell", :path => "ubuntu/setup/04_install-guest-additions.sh" do |s|
+        s.args = [VBOX]
+      end
+      node.vm.provision "setup-docker",  :type => "shell", :path => "ubuntu/setup/05_install-docker.sh" do |s|
+        s.args = [DOCKER]
+      end
+      node.vm.provision "setup-sshkey",  :type => "shell", :path => "ubuntu/setup/06_add-ssh-key.sh"
 
       node.vm.provision :shell do |shell|
         shell.privileged = true
@@ -76,9 +88,11 @@ Vagrant.configure("2") do |config|
       node.vm.provision "setup-ks8-route", :type => "shell", :run => "always", :path => "ubuntu/k8s/setup_route.sh" do |s|
         s.args = ["enp0s8"]
       end
-      node.vm.provision "setup-k8s-bin",   type: "shell", :path => "ubuntu/k8s/01_install.sh" 
-      node.vm.provision "setup-k8s-cp",    type: "shell", :path => "ubuntu/k8s/02_controlplane.sh"
-      node.vm.provision "setup-k9s",       type: "shell", :path => "ubuntu/k8s/04_k9s.sh"
+      node.vm.provision "setup-k8s-bin",   :type => "shell", :path => "ubuntu/k8s/01_install.sh" do |s|
+        s.args = [K8S]
+      end
+      node.vm.provision "setup-k8s-cp",    :type => "shell", :path => "ubuntu/k8s/02_controlplane.sh"
+      node.vm.provision "setup-k9s",       :type => "shell", :path => "ubuntu/k8s/04_k9s.sh"
     end
   end
 
@@ -102,13 +116,19 @@ Vagrant.configure("2") do |config|
         end
       end
 
-      node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/setup/01_setup-hosts.sh" do |s|
+      node.vm.provision "setup-hosts",   :type => "shell", :path => "ubuntu/setup/01_setup-hosts.sh" do |s|
         s.args = ["enp0s8"]
       end
-      node.vm.provision "setup-dns",     type: "shell", :path => "ubuntu/setup/02_update-dns.sh"
-      node.vm.provision "setup-upgrade", type: "shell", :path => "ubuntu/setup/03_upgrade.sh"
-      node.vm.provision "setup-vagrant", type: "shell", :path => "ubuntu/setup/04_install-guest-additions.sh"
-      node.vm.provision "setup-docker",  type: "shell", :path => "ubuntu/setup/05_install-docker.sh"
+      node.vm.provision "setup-dns",     :type => "shell", :path => "ubuntu/setup/02_update-dns.sh"  do |s|
+        s.args = [DNS]
+      end
+      node.vm.provision "setup-upgrade", :type => "shell", :path => "ubuntu/setup/03_upgrade.sh"
+      node.vm.provision "setup-vboxadd", :type => "shell", :path => "ubuntu/setup/04_install-guest-additions.sh"  do |s|
+        s.args = [VBOX]
+      end
+      node.vm.provision "setup-docker",  :type => "shell", :path => "ubuntu/setup/05_install-docker.sh"  do |s|
+        s.args = [DOCKER]
+      end
       node.vm.provision "setup-sshkey",  type: "shell", :path => "ubuntu/setup/06_add-ssh-key.sh"
 
       node.vm.provision :shell do |shell|
@@ -120,8 +140,10 @@ Vagrant.configure("2") do |config|
       node.vm.provision "setup-ks8-route", :type => "shell", :run => "always", :path => "ubuntu/k8s/setup_route.sh" do |s|
         s.args = ["enp0s8"]
       end
-      node.vm.provision "setup-k8s-bin",   type: "shell", :path => "ubuntu/k8s/01_install.sh" 
-      node.vm.provision "setup-k8s-wrk",   type: "shell", :path => "ubuntu/k8s/03_join-worker.sh"
+      node.vm.provision "setup-k8s-bin",   :type => "shell", :path => "ubuntu/k8s/01_install.sh"  do |s|
+        s.args = [K8S]
+      end
+      node.vm.provision "setup-k8s-wrk",   :type => "shell", :path => "ubuntu/k8s/03_join-worker.sh"
     end
   end
 end

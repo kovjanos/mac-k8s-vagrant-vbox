@@ -1,6 +1,9 @@
 #!/bin/bash
+
+GUEST_ADDITION_VERSION=$1
+
+echo "Installing guest addition for ${GUEST_ADDITION_VERSION}"
 export DEBIAN_FRONTEND=noninteractive
-GUEST_ADDITION_VERSION=6.1.34
 GUEST_ADDITION_ISO=VBoxGuestAdditions_${GUEST_ADDITION_VERSION}.iso
 GUEST_ADDITION_MOUNT=/media/VBoxGuestAdditions
 

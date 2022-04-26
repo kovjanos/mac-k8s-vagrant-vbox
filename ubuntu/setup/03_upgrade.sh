@@ -1,4 +1,5 @@
 #!/bin/bash
+
 export DEBIAN_FRONTEND=noninteractive
 
 apt -y -qq -oDpkg::Use-Pty=false remove unattended-upgrades

@@ -1,11 +1,15 @@
 #!/bin/bash
 set -e
 IFNAME=$1
+
+echo "Using interface: ${IFNAME}"
+
 ADDRESS="$(ip -4 addr show $IFNAME | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
 sed -e "s/^.*${HOSTNAME}.*/${ADDRESS} ${HOSTNAME} ${HOSTNAME}.local/" -i /etc/hosts
 
 # remove ubuntu entry
-sed -e '/^.*ubuntu-jammy.*/d' -i /etc/hosts
+. /etc/os-release
+sed -e "/^.*ubuntu-${VERSION_CODENAME}.*/d" -i /etc/hosts
 
 
 # Update /etc/hosts about other hosts

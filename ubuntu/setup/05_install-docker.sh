@@ -1,5 +1,9 @@
 #!/bin/bash
 
+DOCKER_VERSION=$1
+
+echo "Installing docker-ce for ubuntu from ${DOCKER_VERSION} version"
+
 export DEBIAN_FRONTEND=noninteractive 
 
 apt-get -y -qq -o Dpkg::Use-Pty=false install  \
@@ -15,4 +19,4 @@ add-apt-repository \
      stable"
 
 apt-get update -qq  
-apt-get install -y -qq -o=Dpkg::Use-Pty=0 docker-ce=$(apt-cache madison docker-ce | grep 20.10 | head -1 | awk '{print $3}')
+apt-get install -y -qq -o=Dpkg::Use-Pty=0 docker-ce=$(apt-cache madison docker-ce | grep "${DOCKER_VERSION}" | head -1 | awk '{print $3}')
