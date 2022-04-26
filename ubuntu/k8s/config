@@ -1,0 +1,7 @@
+
+KUBE_VERSION=1.23.1-00
+
+KUBE_CP_ENDPOINT=kubemaster1    # no HA as of now
+KUBE_SVC_CIDR=10.96.0.0/12
+
+
