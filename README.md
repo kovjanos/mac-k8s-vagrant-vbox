@@ -22,20 +22,31 @@ Host kubemaster1
 ```
 > NOTE: no need for the ``HostName`` config if you put ``kubemaster1`` for ``127.0.0.1`` into your ``/etc/hosts`` - see also the host's kubectl comment.
 
+&nbsp;
 K8S will be installed with
 - WEAVE as CNI
 - NGINX Ingress Controller - in NodePort mode
 
-For Ingress the host's ``80`` and ``443`` ports are forwarded to the Ingress Controller via the 1st master.. 
-Put your names on your localhost and ready to use ingress, e.g.:
+For Ingress the host's ``80`` and ``443`` ports are forwarded to the Ingress Controller via the 1st master (``kubemaster1``).
+> Note: these are privileged ports, might not work on your system!
+
+Put your host/domain names on your localhost and ready to use ingress, e.g.:
 ```bash
 # /etc/hosts
 127.0.0.1   localhost  kubemaster1  foo.bar.com
-
-$ curl foo.bar.com
 ```
-> Note: these are privileged ports, might not work on your system!
+...then create some ingress and should be accessible from your host OS:
+```bahs
+k config use-context vagrant-admin@vagrant
+k create ns ingtest
+k -n ingtest run web --image=httpd --port 80
+k -n ingtest expose pod web --name websvc
+k -n ingtest create ingress ingtesting --class=nginx --rule="foo.bar.com/*=websvc:80"
 
+#from host OS:
+curl http://foo.bar.com/
+```
+&nbsp;
 
 Get your host's kubectl manage the vagrant based k8s via merging the clsuter's config into yours.
 ```bash
@@ -54,7 +65,7 @@ kubectl config use-context vagrant-admin@vagrant
 kubectl get all -A
 ```
 
-
+&nbsp;
 
 ## Config 
 
