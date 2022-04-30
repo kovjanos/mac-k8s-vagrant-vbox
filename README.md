@@ -20,7 +20,7 @@ Host kubemaster1
   IdentityFile ~/.ssh/id_rsa-foo-bar
   StrictHostKeyChecking = no
 ```
-> NOTE: no need for the ``HostName`` config if you put ``kubemaster1`` into your ``/etc/hosts`` - see also the host's kubectl comment.
+> NOTE: no need for the ``HostName`` config if you put ``kubemaster1`` for ``127.0.0.1`` into your ``/etc/hosts`` - see also the host's kubectl comment.
 
 K8S will be installed with
 - WEAVE as CNI
@@ -41,7 +41,8 @@ Get your host's kubectl manage the vagrant based k8s via merging the clsuter's c
 ```bash
 D=$(date +%Y%m%d%H%M%S)
 cp ~/.kube/config ~/.kube/config-$D 
-KUBECONFIG=local/kube-vagrant-config:~/.kube/config kubectl config view --flatten > ~/.kube/merged-$D
+KUBECONFIG=local/kube-vagrant-config:~/.kube/config \
+  kubectl config view --flatten > ~/.kube/merged-$D
 cp -f ~/.kube/merged-$D ~/.kube/config 
 ```
 > NOTE: for this to make it working you need to put the ``kubemaster1`` name on ``127.0.0.1`` into your ``/etc/hosts``
