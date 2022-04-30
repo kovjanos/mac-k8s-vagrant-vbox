@@ -4,10 +4,11 @@ NUM_WORKER_NODE = 2   # max 8
 
 
 # USE_PUBLIC_NET: configure an interface with direct public access 
+# Note: nat, private and hostonly are always configured 
 #   yes:  uses the static IPs - see below
 #   dhcp: uses dhcp to acquire IP for the if
 #   no:   do not configure public if
-USE_PUBLIC_NET = "dhcp"
+USE_PUBLIC_NET = "no"
 
 # PUBLIC_BRIDGE_IF: list of interfaces to try to bridge to
 #   required in case if USE_PUBLIC_NET != no
