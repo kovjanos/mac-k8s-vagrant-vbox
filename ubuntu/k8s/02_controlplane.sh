@@ -17,6 +17,17 @@ mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 
+
+
+cat /etc/kubernetes/admin.conf \
+  | sed -e 's/:6443$/:36443/' \
+  | sed -e 's/cluster: kubernetes/cluster: vagrant/' \
+  | sed -e 's/kubernetes-admin@kubernetes/vagrant-admin@vagrant/' \
+  | sed -e 's/user: kubernetes-admin/user: vagrant-admin/' \
+  | sed -e 's/name: kubernetes-admin/name: vagrant-admin/' \
+  | sed -e 's/name: kubernetes/name: vagrant/'  \
+  > /vagrant/local/kube-vagrant-config 
+
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"  2>&1 | tee /vagrant/local/k8s/weave.$(hostname -s).out
 
 

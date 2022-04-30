@@ -3,15 +3,59 @@
 Creates a few machines and sets up K8S on them.
 
 All nodes are created with
-- internal network hosting k8s. Private network 'k8s' is on 192.168.57/24.
-- host-only network to access nodes if needed. Host only network is on 192.168.56/24.
+- internal network hosting k8s. Private network ``k8s`` is on ``192.168.57/24``.
+- host-only network to access nodes if needed. Host only network is on ``192.168.56/24``.
 - optionally with public network (either static or dhcp).
+- currently only single-master multi-worker mode is supprted
 
-All hosts are exposed for ssh on localhost on port 221x (masters) or 222x (workers)
+All hosts are exposed for ssh on localhost on port 221x (masters) or 222x (workers) for easy access.
+Put your favourite SSH Public key as ``local/my-ssh-key.pub`` and it will be injected into all hosts,
+e.g.:
+```bash
+# ~/.ssh/config
+Host kubemaster1
+  HostName localhost
+  Port 2211
+  User root
+  IdentityFile ~/.ssh/id_rsa-foo-bar
+  StrictHostKeyChecking = no
+```
+> NOTE: no need for the ``HostName`` config if you put ``kubemaster1`` into your ``/etc/hosts`` - see also the host's kubectl comment.
 
-Put your favourite SSH Public key into local/my-ssh-key.pub and it will be injected into all hosts.
+K8S will be installed with
+- WEAVE as CNI
+- NGINX Ingress Controller - in NodePort mode
+
+For Ingress the host's ``80`` and ``443`` ports are forwarded to the Ingress Controller via the 1st master.. 
+Put your names on your localhost and ready to use ingress, e.g.:
+```bash
+# /etc/hosts
+127.0.0.1   localhost  foo.bar.com
+
+$ curl foo.bar.com
+```
+> Note: these are privileged ports, might not work on your system!
 
 
+Get your host's kubectl manage the vagrant based k8s via merging the clsuter's config into yours.
+```bash
+D=$(date +%Y%m%d%H%M%S)
+cp ~/.kube/config ~/.kube/config-$D 
+KUBECONFIG=local/kube-vagrant-config:~/.kube/config kubectl config view --flatten > ~/.kube/merged-$D
+cp -f ~/.kube/merged-$D ~/.kube/config 
+```
+> NOTE: for this to make it working you need to put the ``kubemaster1`` name on ``127.0.0.1`` into your ``/etc/hosts``
+
+...then set your context and enjoy remote kubectl:
+```bash
+kubectl config use-context vagrant-admin@vagrant
+
+kubectl get all -A
+```
+
+
+
+## Config 
 
 Props to be set in the Vagrant file:
 - NUM_MASTER_NODE

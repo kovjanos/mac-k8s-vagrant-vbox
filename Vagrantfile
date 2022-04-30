@@ -11,7 +11,10 @@ USE_PUBLIC_NET = "dhcp"
 
 # PUBLIC_BRIDGE_IF: list of interfaces to try to bridge to
 #   required in case if USE_PUBLIC_NET != no
-PUBLIC_BRIDGE_IF = "en0: Ethernet"
+PUBLIC_BRIDGE_IF = [ 
+  "en0: Ethernet", 
+  "en0: Wi-Fi (Wireless)"
+]
 
 # PUBLIC_IP_NW + port bases 
 #   required in case if USE_PUBLIC_NET = yes 
@@ -25,6 +28,10 @@ VBOX="6.1.34"    # VirtualBox version
 DOCKER="20.10"   # Docker version filter for Ubuntu
 K8S="1.23"       # k8s version to install 
 
+MASTER_CPU=2
+MASTER_MEM=2048
+WORKER_CPU=2
+WORKER_MEM=2048
 
 # -----------
 
@@ -49,8 +56,8 @@ Vagrant.configure("2") do |config|
       # Name shown in the GUI
       node.vm.provider "virtualbox" do |vb|
         vb.name = "kubemaster#{i}"
-        vb.memory = 2048
-        vb.cpus = 2
+        vb.memory = MASTER_MEM
+        vb.cpus = MASTER_CPU
       end
       node.vm.hostname = "kubemaster#{i}"
       node.vm.network :private_network, ip: PRIVATE_IP_NW + "#{PRIVATE_MASTER_IP_START + i}", virtualbox__intnet: "k8s"
@@ -62,6 +69,12 @@ Vagrant.configure("2") do |config|
         if USE_PUBLIC_NET == "dhcp"
           node.vm.network :public_network, type: "dhcp", bridge: PUBLIC_BRIDGE_IF
         end
+      end
+
+      if i == 1
+        node.vm.network :forwarded_port, id: "ingress-http",  guest: 30001, host_ip: "0.0.0.0", host: "80"
+        node.vm.network :forwarded_port, id: "ingress-https", guest: 30002, host_ip: "0.0.0.0", host: "443"
+        node.vm.network :forwarded_port, id: "kubeapisrv",    guest: 6443,  host_ip: "0.0.0.0", host: "36443"
       end
 
       node.vm.provision "setup-hosts",   :type => "shell", :path => "ubuntu/setup/01_setup-hosts.sh" do |s|
@@ -91,8 +104,9 @@ Vagrant.configure("2") do |config|
       node.vm.provision "setup-k8s-bin",   :type => "shell", :path => "ubuntu/k8s/01_install.sh" do |s|
         s.args = [K8S]
       end
-      node.vm.provision "setup-k8s-cp",    :type => "shell", :path => "ubuntu/k8s/02_controlplane.sh"
-      node.vm.provision "setup-k9s",       :type => "shell", :path => "ubuntu/k8s/04_k9s.sh"
+      node.vm.provision "setup-k8s-cp",      :type => "shell", :path => "ubuntu/k8s/02_controlplane.sh"
+      node.vm.provision "setup-k8s-ingress", :type => "shell", :path => "ubuntu/k8s/04_ingress.sh"
+      node.vm.provision "setup-k9s",         :type => "shell", :path => "ubuntu/k8s/05_k9s.sh"
     end
   end
 
@@ -101,8 +115,8 @@ Vagrant.configure("2") do |config|
     config.vm.define "kubenode#{i}" do |node|
       node.vm.provider "virtualbox" do |vb|
         vb.name = "kubenode#{i}"
-        vb.memory = 2048
-        vb.cpus = 2
+        vb.memory = WORKER_MEM
+        vb.cpus = WORKER_CPU
       end
       node.vm.hostname = "kubenode#{i}"
       node.vm.network :private_network, ip: PRIVATE_IP_NW + "#{PRIVATE_WORKER_IP_START + i}", virtualbox__intnet: "k8s"
