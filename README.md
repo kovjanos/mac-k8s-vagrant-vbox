@@ -30,7 +30,7 @@ For Ingress the host's ``80`` and ``443`` ports are forwarded to the Ingress Con
 Put your names on your localhost and ready to use ingress, e.g.:
 ```bash
 # /etc/hosts
-127.0.0.1   localhost  foo.bar.com
+127.0.0.1   localhost  kubemaster1  foo.bar.com
 
 $ curl foo.bar.com
 ```
