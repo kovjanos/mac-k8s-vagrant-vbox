@@ -20,12 +20,13 @@ Host kubemaster1
   IdentityFile ~/.ssh/id_rsa-foo-bar
   StrictHostKeyChecking = no
 ```
-> NOTE: no need for the ``HostName`` config if you put ``kubemaster1`` for ``127.0.0.1`` into your ``/etc/hosts`` - see also the host's kubectl comment.
+> NOTE: no need for the ``HostName localhost`` config if you put ``kubemaster1`` for ``127.0.0.1`` into your ``/etc/hosts`` - see also the host's kubectl comment.
 
 &nbsp;
 K8S will be installed with
 - WEAVE as CNI
 - NGINX Ingress Controller - in NodePort mode
+- Dashboard (in progress)
 
 For Ingress the host's ``80`` and ``443`` ports are forwarded to the Ingress Controller via the 1st master (``kubemaster1``).
 > Note: these are privileged ports, might not work on your system!
@@ -67,7 +68,13 @@ kubectl get all -A
 
 &nbsp;
 
+If you are reinstalling the clsuter quite frequently, then look into [builder](builder/README.md) to prebuild the image with binaries preinstalled!
+
+&nbsp;
+
 ## Config 
+
+Install is moved from docker to containred. podman aslo installed on the nodes. Check for the ``./config`` file for more details!
 
 Props to be set in the Vagrant file:
 - NUM_MASTER_NODE
@@ -102,15 +109,3 @@ Props to be set in the Vagrant file:
 
   The address of your preferred DNS server. E.g.  DNS=8.8.8.8
   
-- VBOX
-
-  Version of your VirtualBox - this is required to install the right version of VBox Guest Addons
-  
-- DOCKER
-
-  The version of docker-ce for Ubuntu availbale in their repo. E.g. DOCKER=20.10 
-  Note: make sure the repo has the Ubuntu specific release!
-  
-- K8S
-
-  Version of k8s to install
