@@ -1,0 +1,14 @@
+{
+  "name": "local/jammy64-k8s",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "providers": [
+        {
+          "name": "virtualbox",
+          "url": "local/build/package.box"
+        }
+      ]
+    }
+  ]
+}
