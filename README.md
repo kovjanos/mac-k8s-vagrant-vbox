@@ -24,9 +24,9 @@ Host kubemaster1
 
 &nbsp;
 K8S will be installed with
-- WEAVE as CNI
+- WEAVE NET
 - NGINX Ingress Controller - in NodePort mode
-- Dashboard (in progress)
+- Kubernetes Dashboard
 
 For Ingress the host's ``80`` and ``443`` ports are forwarded to the Ingress Controller via the 1st master (``kubemaster1``).
 > Note: these are privileged ports, might not work on your system!
@@ -34,7 +34,7 @@ For Ingress the host's ``80`` and ``443`` ports are forwarded to the Ingress Con
 Put your host/domain names on your localhost and ready to use ingress, e.g.:
 ```bash
 # /etc/hosts
-127.0.0.1   localhost  kubemaster1  foo.bar.com
+127.0.0.1   localhost  kubemaster1  kubernetes-desktop foo.bar.com
 ```
 ...then create some ingress and should be accessible from your host OS:
 ```bahs
@@ -47,6 +47,10 @@ k -n ingtest create ingress ingtesting --class=nginx --rule="foo.bar.com/*=websv
 #from host OS:
 curl http://foo.bar.com/
 ```
+
+Note: the Kubernetes Dashboard is exposed through the ingress-nginx, needs to use the https://kubernetes-dashboard/ URL.
+To log in the admin user's token can be found in local/k8s/kubernetes-dashboard-admin-token.kubemaster1.out. 
+
 &nbsp;
 
 Get your host's kubectl manage the vagrant based k8s via merging the clsuter's config into yours.
@@ -69,12 +73,13 @@ kubectl get all -A
 &nbsp;
 
 If you are reinstalling the clsuter quite frequently, then look into [builder](builder/README.md) to prebuild the image with binaries preinstalled!
+This might be mandatory if the docker.io image download limit is blocking you (still need to download images building the box and a few during install)
 
 &nbsp;
 
 ## Config 
 
-Install is moved from docker to containred. podman aslo installed on the nodes. Check for the ``./config`` file for more details!
+Check for the ``./config`` file for more details!
 
 Props to be set in the Vagrant file:
 - NUM_MASTER_NODE

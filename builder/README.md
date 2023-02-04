@@ -10,6 +10,7 @@ Download & install the required tools:
 Get the base image, e.g.
 ```bash
 vagrant box add ubuntu/jammy64 --provider virtualbox
+vagrant box update --box ubuntu/jammy64
 ```
 
 &nbsp;

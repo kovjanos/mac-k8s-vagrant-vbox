@@ -10,7 +10,7 @@ BOX_PREINSTALLED = 1
 #BOX_PREINSTALLED = 0
 
 # Define the number of master and worker nodes
-NUM_MASTER_NODE = 1   # max 4
+NUM_MASTER_NODE = 1   # max 4 - no HA support yet! keep it 1
 NUM_WORKER_NODE = 2   # max 8
 
 # USE_PUBLIC_NET: configure an interface with direct public access 
