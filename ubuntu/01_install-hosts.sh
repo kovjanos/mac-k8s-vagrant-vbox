@@ -51,6 +51,7 @@ apt-get -y -qq -o Dpkg::Use-Pty=false install  \
         apt-transport-https \
         ca-certificates \
         curl \
+        gpg \
         software-properties-common \
         bash-completion \
         binutils
@@ -91,10 +92,16 @@ EOF
 
 ### k8s
 echo "Installing k8s, ver: ${K8S_VERSION}..."
-curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+#curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+#echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v${K8S_VERSION_MAJOR}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${K8S_VERSION_MAJOR}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
 apt-get -qq update
-apt-get -y -qq install kubelet=${K8S_VERSION}${K8S_VERSION_P} kubeadm=${K8S_VERSION}${K8S_VERSION_P} kubectl=${K8S_VERSION}${K8S_VERSION_P}
+#apt-get -y -qq install kubelet=${K8S_VERSION}${K8S_VERSION_P} kubeadm=${K8S_VERSION}${K8S_VERSION_P} kubectl=${K8S_VERSION}${K8S_VERSION_P}
+apt-get -y -qq install  kubelet kubeadm kubectl
 apt-mark hold kubelet kubeadm kubectl kubernetes-cni
 
 ### k8s
@@ -137,7 +144,7 @@ crictl pull weaveworks/weave-npc:latest
 
 echo "Fetching k8s-dashboard images..."
 crictl pull kubernetesui/dashboard:v${K8S_DASHBOARD_VERSION}
-crictl pull kubernetesui/metrics-scraper:v${K8S_DASHBOARD_METRICS}
+#crictl pull kubernetesui/metrics-scraper:v${K8S_DASHBOARD_METRICS}
 
 echo "Fetching ingress-nginx images..."
 crictl pull ingress-nginx/controller:v${KUBE_NGINX_BAREMETAL_INGRESS_CONTROLLER_VERSION}

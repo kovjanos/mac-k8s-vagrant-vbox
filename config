@@ -1,21 +1,26 @@
 
-GUEST_ADDITION_VERSION="7.0.6"     # VirtualBox version
+GUEST_ADDITION_VERSION="7.0.12"     # VirtualBox version
 
-# no ingress-nginx support for 1.26.x yet
-#K8S_VERSION=1.26.1 
-#K8S_VERSION_P="-00"
+# https://cdn.dl.k8s.io/release/stable.txt
+K8S_VERSION_MAJOR=1.28
+K8S_VERSION_MINOR=3
+K8S_VERSION=${K8S_VERSION_MAJOR}.${K8S_VERSION_MINOR}
+K8S_VERSION_P=     #"-00"
 
-K8S_VERSION=1.25.6
-K8S_VERSION_P="-00"
-
+# https://www.weave.works/docs/net/latest/kubernetes/kube-addon/
 K8S_WEAVE_NET_VERSION=2.8.1
 
-KUBE_NGINX_BAREMETAL_INGRESS_CONTROLLER_VERSION=1.5.1
+# https://github.com/kubernetes/ingress-nginx/
+KUBE_NGINX_BAREMETAL_INGRESS_CONTROLLER_VERSION=1.9.4
 
+# https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 K8S_DASHBOARD_VERSION=2.7.0
-K8S_DASHBOARD_METRICS=1.0.8
 
-K9S_VERSION=0.27.2
+# ?? deprecated
+#K8S_DASHBOARD_METRICS=1.0.8
+
+# https://github.com/derailed/k9s/releases
+K9S_VERSION=0.27.4
 
 K8S_CONTROLPLANE_ENDPOINT=kubemaster1      # no HA as of now!!
 
